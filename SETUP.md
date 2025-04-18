@@ -1,50 +1,59 @@
-# Setup Guide
+# 🧪 Setup Guide (Work in Progress)
 
-> ⚠️ **Work In Progress**
-> 
-> This setup guide is currently under development and **not yet tested** in a production environment.
-> Use with caution. Feedback is welcome!
+> ⚠️ **Disclaimer**  
+> This guide is currently in development and **not yet tested in a production environment**.  
+> It is part of a DevOps learning project and subject to changes and improvements.
 
+---
 
-## 🧪 Setup Instructions
+## 📦 Prerequisites
 
-### 1. **Set up Azure Monitor and Log Analytics**
+Before getting started, make sure you have:
 
-Azure Monitor is used to collect, analyze, and act on telemetry from your cloud environment. This step involves configuring Azure VMs to send activity logs to the **Log Analytics Workspace**.
+- An active **Azure subscription**
+- At least one **Azure Virtual Machine** deployed
+- **Log Analytics Workspace** and **Azure Monitor** configured
+- Access to **Azure Functions** in your subscription
+- Optional: **SendGrid**, **Microsoft Teams Webhook**, or **Slack Webhook** for notifications
 
-#### Step 1: Create a Log Analytics Workspace
+---
 
-1. Go to the [Azure Portal](https://portal.azure.com/).
-2. In the **Search** bar, type **Log Analytics** and select **Log Analytics Workspaces**.
-3. Click on **+ Add** to create a new workspace.
-4. Fill in the necessary details:
-   - **Subscription**: Choose your subscription.
-   - **Resource Group**: Select an existing resource group or create a new one.
-   - **Name**: Choose a unique name for your workspace (e.g., `MyVMLogs`).
-   - **Region**: Select the region where the logs will be stored.
-5. Once you have entered the details, click **Review + Create**, then click **Create**.
+## 🧱 Step-by-Step Setup
 
-#### Step 2: Configure Azure Virtual Machines to Send Logs
+### 1. Create a Log Analytics Workspace
 
-1. In the **Azure Portal**, navigate to your **Virtual Machine**.
-2. Under **Monitoring**, select **Diagnostics settings**.
-3. Click **+ Add diagnostic setting**.
-4. Choose the log categories you want to send to the Log Analytics Workspace (e.g., **Guest OS** and **Boot diagnostics**).
-5. Under **Destination details**, select **Send to Log Analytics** and choose the workspace you created earlier.
-6. Click **Save**.
+- Go to the [Azure Portal](https://portal.azure.com)
+- Search for **Log Analytics Workspace**
+- Click **Create**, then fill in:
+  - Subscription
+  - Resource Group
+  - Workspace Name
+  - Region
+- Click **Review + Create** → **Create**
 
-### 2. **Create and Configure the Azure Monitor Alert**
+---
 
-Azure Monitor will use a **Log-based Alert** to detect reboots triggered by automation. The alert will trigger an **Azure Function** when the condition is met.
+### 2. Connect Your VM to the Workspace
 
-#### Step 1: Create a Log-based Alert
+- Go to your **Virtual Machine**
+- Under **Monitoring**, select **Insights**
+- Click **Enable** and connect it to your Log Analytics Workspace
 
-1. In the **Azure Portal**, go to **Azure Monitor** (you can search for it in the search bar).
-2. On the **Monitor** page, select **Alerts** from the left-hand sidebar.
-3. Click **+ New alert rule**.
-4. Under **Scope**, click **Select resource** and choose the **Log Analytics Workspace** you created.
-5. Under **Condition**, click **Add condition** and select **Log query**.
-6. Paste the following KQL query to detect automated reboots:
-   ```kql
-   Event
-   | where EventID == 1074 and (Message contains "Automated")
+---
+
+### 3. Set Up Azure Monitor Alert (Log Query)
+
+- Go to **Azure Monitor**
+- Choose **Alerts** > **New Alert Rule**
+- Set:
+  - **Scope**: Select your Log Analytics Workspace
+  - **Condition**: Use a Kusto Query Language (KQL) query to detect reboot events from automation
+  - **Action**: Choose **Action Group** → Add a webhook or trigger an Azure Function
+  - **Alert Details**: Name your alert rule
+
+> Example KQL Query (customize based on your logs):
+```kusto
+Event
+| where EventLevelName == "Information"
+| where Source == "Service Control Manager"
+| where RenderedDescription has "restart" or "reboot"
