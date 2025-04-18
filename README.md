@@ -5,12 +5,6 @@ A serverless solution built on **Azure Functions** and **Azure Monitor** to dete
 > ⚠️ **Disclaimer:**  
 > This project is currently in the development stage and is **not yet tested in production**. It will undergo further testing and improvements.  
 
----
-
-## 📊 Architecture
-
-The system uses **Azure Functions**, **Azure Monitor**, and **Log Analytics** to detect automated reboots of Azure VMs.
-
 
 ---
 
