@@ -62,6 +62,7 @@ This query identifies:
 ---
 
 ## 🧪 Setup Instructions
+For detailed setup instructions, please refer to the [SETUP.md](./SETUP.md) file.
 
 ### 1. **Set up Azure Monitor and Log Analytics**
 - Create a **Log Analytics Workspace** in your Azure portal.
